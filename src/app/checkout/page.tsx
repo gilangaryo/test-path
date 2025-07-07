@@ -13,7 +13,7 @@ export default function CheckoutPage() {
                 items: [
                     {
                         name: 'Case Study Qatar',
-                        price: 15,
+                        price: 150000,
                         image: 'https://res.cloudinary.com/dla5fna8n/image/upload/v1728043321/cld-sample-5.jpg',
                         quantity: 1,
                     },
