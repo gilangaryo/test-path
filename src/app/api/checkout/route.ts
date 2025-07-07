@@ -1,3 +1,5 @@
+// app/api/checkout/route.ts
+
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
@@ -34,10 +36,8 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ id: session.id });
     } catch (error) {
-        if (error instanceof Error) {
-            return NextResponse.json({ error: error.message }, { status: 500 });
-        }
-
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        const errorMessage =
+            error instanceof Error ? error.message : 'Internal Server Error';
+        return NextResponse.json({ error: errorMessage }, { status: 500 });
     }
 }
