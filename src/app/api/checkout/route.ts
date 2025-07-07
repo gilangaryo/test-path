@@ -1,18 +1,22 @@
-// app/api/checkout/route.ts
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-    apiVersion: '2022-11-15',
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+type CheckoutItem = {
+    name: string;
+    price: number;
+    image: string;
+    quantity: number;
+};
 
 export async function POST(req: Request) {
-    const { items } = await req.json();
+    const { items }: { items: CheckoutItem[] } = await req.json();
 
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
-            line_items: items.map((item: any) => ({
+            line_items: items.map((item) => ({
                 price_data: {
                     currency: 'idr',
                     product_data: {
@@ -29,7 +33,11 @@ export async function POST(req: Request) {
         });
 
         return NextResponse.json({ id: session.id });
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    } catch (error) {
+        if (error instanceof Error) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }
